@@ -348,3 +348,124 @@ Essas propriedades são métodos diretamente no objeto `prisma` (a instância do
     const result =
       await prisma.$executeRaw`DELETE FROM "posts" WHERE "authorId" = ${"user-id"}`;
     ```
+
+## Docker
+
+O Docker funciona de forma a facilitar a execução consistente de aplicações. Ao invés de a aplicação ser executada diretamente sobre o sistema operacional, o Docker a empacota em um container, que é uma imagem (arquivo executável contendo o código e todas as suas dependências). O Docker utiliza apenas o núcleo do sistema operacional hospedeiro, fornecendo um ambiente isolado e mínimo para o container. Isso otimiza a execução do ambiente da aplicação e garante que ela rode de forma padronizada em diversas máquinas diferentes.
+
+### Criação de Container
+
+Para criar um container Docker, o comando é:
+
+```bash
+docker run -d \
+  --name api-solid-pg \
+  -e POSTGRESQL_USERNAME=docker \
+  -e POSTGRESQL_PASSWORD=docker \
+  -e POSTGRESQL_DATABASE=apisolid \
+  -p 5433:5432 \
+  -v api-solid-pg-data:/bitnami/postgresql \
+  bitnami/postgresql:latest
+```
+
+#### Explicação das flags
+
+**d:** Faz com que o container rode em segundo plano (detached mode) após ser criado, liberando o terminal.
+
+**-v:** Serve para que o Docker gerencie e guarde de forma consistente os dados gerados pelo container (volume mapeado). Isso garante que, mesmo se o container for removido, os dados persistam.
+
+**-e:** Define variáveis de ambiente dentro do container, que o software (como o PostgreSQL) utiliza para sua configuração, incluindo credenciais para autenticar o acesso ao banco de dados.
+
+**-p:** Configura o mapeamento de portas do servidor. No exemplo 5433:5432, a porta 5433 da sua máquina hospedeira acessa a porta 5432 que está rodando dentro do container Docker, permitindo a comunicação externa.
+
+# Comandos Essenciais do Docker
+
+Este documento lista e explica os comandos Docker mais utilizados para gerenciar o ciclo de vida dos seus containers.
+
+---
+
+### `docker ps`
+
+- **O que faz:** Lista todos os **containers que estão atualmente em execução** na sua máquina.
+- **Uso:** É o comando mais comum para verificar rapidamente quais dos seus serviços Docker estão ativos.
+- **Exemplo:**
+  ```bash
+  docker ps
+  ```
+  Isso mostraria seu container `api-solid-pg` se ele estiver rodando.
+
+---
+
+### `docker start <nome_container>`
+
+- **O que faz:** Inicia um container Docker que está **parado**.
+- **Uso:** Se você parou um container anteriormente (com `docker stop`) e quer iniciá-lo novamente com suas configurações e dados existentes, use este comando.
+- **Exemplo:**
+  ```bash
+  docker start api-solid-pg
+  ```
+  Isso iniciaria seu container PostgreSQL se ele estivesse parado.
+
+---
+
+### `docker stop <nome_container>`
+
+- **O que faz:** Para um container Docker que está **em execução**.
+- **Uso:** Usado para desligar um container de forma controlada. O Docker envia um sinal de desligamento (SIGTERM) para o processo principal do container, dando a ele um tempo para finalizar suas operações antes de ser forçado a parar.
+- **Exemplo:**
+  ```bash
+  docker stop api-solid-pg
+  ```
+  Isso pararia seu container PostgreSQL.
+
+---
+
+### `docker ps -a`
+
+- **O que faz:** Lista **todos os containers**, incluindo aqueles que estão **parados** ou que já foram encerrados.
+- **Uso:** Útil para ver o histórico de containers, encontrar containers que não estão mais rodando, ou identificar containers que precisam ser removidos.
+- **Exemplo:**
+  ```bash
+  docker ps -a
+  ```
+  Isso mostraria tanto os containers `Up` quanto os `Exited`.
+
+---
+
+### `docker rm <nome_container>`
+
+- **O que faz:** Remove (deleta) um container Docker **parado**.
+- **Uso:** Usado para limpar containers que não são mais necessários. Você só pode remover um container se ele não estiver em execução. Se ele estiver rodando, você precisará pará-lo primeiro com `docker stop`.
+- **Exemplo:**
+  ```bash
+  docker rm api-solid-pg
+  ```
+  Isso deletaria o container `api-solid-pg` da sua lista de containers.
+
+# Comandos Prisma
+
+---
+
+### `npx prisma migrate dev`
+
+- **O que faz:** Aplica todas as definições de modelos (`model`s) criadas no seu `schema.prisma` ao banco de dados especificado na `DATABASE_URL`. Este comando gera e executa as migrações SQL necessárias para sincronizar o esquema do seu banco de dados com o seu `schema.prisma`.
+- **Detalhes da `DATABASE_URL`:** A `DATABASE_URL` é a URL de conexão que o Prisma utiliza para se conectar ao seu banco de dados (que pode estar rodando em um container Docker, como no seu caso). Ela segue um padrão específico para PostgreSQL:
+  ```
+  "postgresql://<usuario>:<senha>@<host>:<porta>/<nome_do_banco_de_dados>"
+  ```
+  - `<usuario>`: Nome de usuário para acesso ao banco.
+  - `<senha>`: Senha para o usuário.
+  - `<host>`: Endereço do servidor do banco de dados (ex: `localhost` para um container mapeado na sua máquina).
+  - `<porta>`: Porta em que o banco de dados está escutando (ex: `5432` ou `5433` se mapeada).
+  - `<nome_do_banco_de_dados>`: Nome do banco de dados ao qual você quer se conectar.
+
+#### O que ele gera:
+
+O comando `npx prisma migrate dev` gera uma pasta `migrations`, e dentro dela, uma nova subpasta com o **timestamp e o nome da migração** que você especificou (ou um nome padrão). Esta subpasta contém:
+
+- Um arquivo `migration.sql`, que são os comandos SQL necessários para aplicar as mudanças de esquema ao banco de dados.
+- Um arquivo `migration_lock_toml` (no seu caso), que serve como um metadado de controle de integridade para aquela migração específica. Ele contém um checksum do `migration.sql` para garantir que o arquivo não foi alterado desde que foi gerado, e outras informações sobre a migração.
+
+### `npx prisma studio`
+
+- **O que faz:** Gera um servidor local (`localhost`) de acesso via navegador, permitindo a **visualização e interação com a estruturação e os dados** do seu banco de dados de forma gráfica. É uma ferramenta útil para inspecionar, adicionar, editar e deletar registros.
