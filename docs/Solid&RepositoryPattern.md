@@ -1,6 +1,6 @@
 # 📘 Documentação Essencial de Desenvolvimento
 
-Este documento abrange conceitos fundamentais em desenvolvimento de software, incluindo os Princípios SOLID para escrita de código limpo e a utilização do Prisma ORM para gestão de banco de dados.
+Este documento abrange conceitos fundamentais em desenvolvimento de software, incluindo os Princípios SOLID e Repository Pattern para escrita de código limpo.
 
 ---
 
@@ -40,3 +40,21 @@ Em vez de interfaces grandes e "inchadas", é melhor ter várias interfaces pequ
 
 Módulos de alto nível (lógica de negócio) não devem depender diretamente de módulos de baixo nível (detalhes de implementação, como um banco de dados específico).  
 Ambos devem depender de abstrações (interfaces ou classes abstratas).
+
+## Repository Pattern
+
+O Repository Pattern é um padrão de arquitetura de software que busca organizar melhor os códigos de um sistema, facilitando as manutenções sobre esse código. Esse padrão diz que as regras de negócio de um sistema (ou seja, o que aquele sistema propõe executar) devem estar separadas dos detalhes de como os dados são armazenados e acessados no banco de dados.
+
+## Solid e Repository Pattern Juntos
+
+### 🔹 D - Dependency Inversion Principle & Repository Pattern
+
+Juntando ambas as arquiteturas, podemos exemplificar as suas operações em conjunto:
+
+Se temos a necessidade de criar um usuário, a **regra de negócio** seria quais as condições para criar um usuário. Por exemplo, o e-mail deve ter no máximo X caracteres. Já os **casos de uso** seriam a função principal de criação desse usuário, que não depende de qual repositório será usado. Cada **repositório** é a parte de alteração no banco de dados.
+
+Juntando os princípios, o **Dependency Inversion Principle (DIP)** opera na tentativa de tornar os módulos independentes, onde a lógica de alto nível ("o chefe") não depende dos detalhes de implementação ("o funcionário"). Aqui, a **lógica de alto nível** seria o **caso de uso** que orquestra a criação do usuário baseando-se nas regras de negócio. Os **detalhes de implementação** (ou lógica de baixo nível), seriam os **repositórios** em si, que lidam diretamente com o banco de dados (por exemplo, usando o Prisma, um driver de SQL, etc.).
+
+O **Repository Pattern**, por sua vez, opera na separação da regra de negócio da lógica de alteração no banco de dados, atuando como a abstração que o DIP recomenda para essa dependência. Isso permite que o "chefe" (caso de uso) execute a ação de criar o usuário sem se preocupar com os detalhes de como o "funcionário" (repositório) fará o trabalho de persistência.
+
+A requisição seria a camada intermediária que torna o Dependency Inversion Principle possível.

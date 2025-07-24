@@ -472,3 +472,22 @@ Ao instanciar o `PrismaClient`, você pode passar um objeto de configuração pa
     }
   }
   ```
+
+## Tipos no Prisma
+
+O Prisma cria vários tipos já pré-determinados com o TypeScript de acordo com as tabelas do seu banco de dados. Esses tipos ficam num objeto (namespace) chamado `Prisma`. Eles abrangem todas as operações, desde a criação de registros até a atualização, passando por filtros e seleções.
+
+**Exemplo:**
+
+```typescript
+export type UserCreateInput = {
+  id?: string;
+  name: string;
+  email: string;
+  password_hash: string;
+  created_at?: Date | string;
+  checkIns?: CheckInCreateNestedManyWithoutUserInput;
+};
+```
+
+Esses tipos são gerados e ficam dentro do arquivo `index.d.ts` (ou outros arquivos de declaração dentro da pasta do Prisma Client gerado). Eles são uma forma poderosa de otimização, pois evitam a necessidade de criação manual de tipos desnecessariamente dentro do código, garantindo tipagem forte e autocompletar em todas as interações com o banco de dados.
