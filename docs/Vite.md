@@ -21,3 +21,23 @@ export default defineConfig({
 ```
 
 O define config é uma função de configuração do vite. Ele recebe um objeto, e dentro desse objeto tem a propriedade plugins, que recebe tsconfigPaths como valor. A partir dessa atribuição, o vite consegue lider com os caminhos criados dentro do tsconfig.
+
+# Configuração do package.json
+
+Por padrão, o Vitest utiliza o modo `watch` para ficar sempre observando as alterações dentro do arquivo de teste. Sendo assim, a cada modificação no código, ele automaticamente refaz os testes.
+
+Para controlar o comportamento de execução dos testes, você pode usar as seguintes flags:
+
+- **`vitest run`**: Essa flag faz com que o Vitest rode os testes **uma única vez** e pare assim que finalizar, sem observar alterações contínuas.
+- **`vitest watch`**: Embora seja o comportamento padrão ao rodar `vitest` sem flags, você pode usar `vitest watch` explicitamente para garantir que ele permaneça observando os arquivos de teste para atualizações contínuas.
+
+**Exemplo de scripts no `package.json`:**
+
+```json
+{
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest watch"
+  }
+}
+```
