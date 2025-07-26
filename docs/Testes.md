@@ -128,3 +128,61 @@ Logo após isso, basta adicionar o comando nos scripts do package.json
     "test:ui": "vitest --ui"
   },
 ```
+
+## TDD - (Test-Driven-Development ou Desenvolvimento Orientado a Testes)
+
+O TDD é uma metodologia de desenvolvimento onde os testes são escritos antes do código de produção. Ele é constituído por 3 fases:
+
+**Red (Vermelho):** Escreva um teste automatizado para uma nova funcionalidade, onde se espera que ele falhe inicialmente.
+
+**Green (Verde):** Escreva apenas o código de produção necessário para que o teste que falhou (e os demais) passe, de maneira mais objetiva e simples possível.
+
+**Refactor (Refatorar):** Otimize o código que foi feito na fase "Green" (e o código existente), melhorando seu design e legibilidade, sempre garantindo que todos os testes continuem passando.
+
+## Vi
+
+O `vi` é uma ferramenta dentro do Vitest que ajuda no trabalho de testes com dados "mockados". Isso é necessário devido a testes que envolvem tempo, por exemplo, onde os dados podem ser fictícios, facilitando assim a execução do teste. Abaixo, algumas das funções importantes do `vi`:
+
+- **`vi.fn()`**: Usado para criar **funções mock (simuladas)**. Você pode controlar o que elas retornam, quantas vezes foram chamadas e com quais argumentos. Ideal para substituir dependências simples.
+- **`vi.spyOn()`**: Usado para **monitorar (espiar)** métodos de objetos existentes. Ele permite que você verifique se um método foi chamado e com quais argumentos, sem alterar seu comportamento original (a menos que você explicitamente o faça).
+- **`vi.useFakeTimers()`**: Substitui as funções de tempo reais do JavaScript (`Date`, `setTimeout`, `setInterval`) por versões controláveis.
+- **`vi.setSystemTime()`**: Define uma data e hora específicas que `Date.now()` e `new Date()` retornarão quando `vi.useFakeTimers()` estiver ativo.
+- **`vi.advanceTimersByTime()` / `vi.advanceTimersByDate()`**: Avança o tempo nos testes quando `vi.useFakeTimers()` está ativo, permitindo testar lógicas baseadas em tempo.
+- **`vi.mock()` / `vi.unmock()`**: Usados para **mockar módulos inteiros**, substituindo implementações de arquivos ou bibliotecas importadas por versões simuladas para o teste.
+
+### Exemplo de Uso de Timers Falsos
+
+```typescript
+beforeEach(() => {
+  checkInsRepository = new InMemoryCheckInsRepository(); // Inicializa o repositório em memória
+  sut = new CheckInUseCase(checkInsRepository); // Inicializa o caso de uso
+
+  vi.useFakeTimers(); // <--- Ativa o uso de timers falsos no Vitest
+});
+
+afterEach(() => {
+  vi.useRealTimers(); // <--- Restaura o uso de timers reais após cada teste
+});
+
+it("should be able to check in", async () => {
+  // Define uma data e hora específicas para o sistema de tempo falso
+  vi.setSystemTime(new Date(2022, 0, 20, 8, 0, 0));
+
+  const { checkIn } = await sut.execute({
+    gymId: "gym-01",
+    userId: "user-01",
+  });
+
+  console.log(checkIn.created_at); // Irá imprimir a data definida por setSystemTime (2022-01-20T08:00:00.000Z)
+
+  expect(checkIn.id).toEqual(expect.any(String)); // Verifica se o ID é uma string
+});
+```
+
+### Explicação
+
+O código acima executa o seguinte:
+
+- `vi.useFakeTimers()`: Indica ao JavaScript (no ambiente de testes) para que ele use um sistema de tempo falso (mockado) em vez do relógio real da máquina.
+- O `afterEach` retira essa utilização por meio do método `vi.useRealTimers()`, sendo uma boa prática para restaurar o ambiente de tempo original e evitar que testes subsequentes sejam afetados por tempos falsos.
+- `vi.setSystemTime()`: Recebe uma data e hora específicas e altera o relógio do sistema de tempo falso para essa data. Assim, `Date.now()` e `new Date()` retornarão essa data "mockada" para todo o sistema da aplicação durante a execução do teste.
