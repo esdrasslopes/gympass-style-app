@@ -1,6 +1,6 @@
 # 📘 Documentação Essencial de Desenvolvimento
 
-Este documento abrange conceitos fundamentais em desenvolvimento de software, incluindo os Princípios SOLID e Repository Pattern para escrita de código limpo.
+Este documento abrange conceitos fundamentais em desenvolvimento de software, incluindo os Princípios SOLID, Repository Pattern e Factory Pattern para escrita de código limpo.
 
 ---
 
@@ -58,3 +58,7 @@ Juntando os princípios, o **Dependency Inversion Principle (DIP)** opera na ten
 O **Repository Pattern**, por sua vez, opera na separação da regra de negócio da lógica de alteração no banco de dados, atuando como a abstração que o DIP recomenda para essa dependência. Isso permite que o "chefe" (caso de uso) execute a ação de criar o usuário sem se preocupar com os detalhes de como o "funcionário" (repositório) fará o trabalho de persistência.
 
 A requisição seria a camada intermediária que torna o Dependency Inversion Principle possível.
+
+## Factory Pattern
+
+O **Factory Pattern** é um padrão de projeto (design pattern) de Programação Orientada a Objetos (POO) que busca generalizar e abstrair o processo de criação de objetos instanciados. Ele faz isso fornecendo uma interface para criar objetos, permitindo que o código cliente solicite um objeto sem precisar saber a sua classe concreta ou os detalhes complexos de sua criação.
