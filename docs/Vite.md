@@ -100,12 +100,31 @@ Primeiramente, é feita a instalação do pacote de cobertura por meio do comand
 npm i @vitest/coverage-v8
 ```
 
-### Como executar
-
 Logo após isso, basta adicionar o comando nos scripts do package.json.
 
 ```json
   "scripts": {
     "test:coverage": "vitest run --coverage"
+  },
+```
+
+## Vitest UI
+
+O Vitest UI é um pacote do Vitest que torna os testes mais visuais. Ele é uma plataforma que está diretamente ligada aos testes da aplicação. Ele fica no modo `watch`, e pode executar testes diretamente da página criada por ele no `localhost`.
+
+### Como executar
+
+Primeiro, é feita a instalação do pacote por meio do comando:
+
+```bash
+npm i -D @vitest/ui
+
+```
+
+Logo após isso, basta adicionar o comando nos scripts do package.json
+
+```json
+  "scripts": {
+    "test:ui": "vitest --ui"
   },
 ```
