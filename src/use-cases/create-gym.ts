@@ -1,5 +1,3 @@
-import { hash } from "bcryptjs";
-
 import { IGymsRepository } from "@/repositories/gyms-repository";
 
 import { Gym } from "@prisma/client";
