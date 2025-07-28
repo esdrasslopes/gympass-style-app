@@ -63,6 +63,10 @@ expect(async () => {
 
 O `expect` possui um método interessante chamado `any`. Ele recebe como parâmetro um tipo de dado (um construtor, como `String`, `Number`, `Boolean`, `Array`, `Object`, `Function` ou uma classe definida por você), onde é validado se um certo valor corresponde ao tipo colocado.
 
+### `expect().toHaveLength()`
+
+O `toHaveLength()` é um matcher usado para verificar o **comprimento** de estruturas que possuem a propriedade `length`, como arrays ou strings.
+
 **Exemplo:**
 
 ```typescript

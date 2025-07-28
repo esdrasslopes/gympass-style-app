@@ -21,7 +21,7 @@ app.setErrorHandler((error, _, reply) => {
   if (env.NODE_ENV !== "production") {
     console.error(error);
   } else {
-    // Here we should to an externaç tool like DataDog/Sentry/NewRelic
+    // Here we should to an external tool like DataDog/Sentry/NewRelic
   }
 
   return reply.status(500).send({
