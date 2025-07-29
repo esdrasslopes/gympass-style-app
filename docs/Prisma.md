@@ -491,3 +491,61 @@ export type UserCreateInput = {
 ```
 
 Esses tipos são gerados e ficam dentro do arquivo `index.d.ts` (ou outros arquivos de declaração dentro da pasta do Prisma Client gerado). Eles são uma forma poderosa de otimização, pois evitam a necessidade de criação manual de tipos desnecessariamente dentro do código, garantindo tipagem forte e autocompletar em todas as interações com o banco de dados.
+
+## Filtragem de Datas no Prisma (`gte`, `lte`)
+
+Dentro do Prisma, é possível utilizar operadores de filtro para campos `DateTime` (e também para campos numéricos) para criar condições precisas em suas consultas.
+
+---
+
+### `gte` (Greater Than or Equal)
+
+- **Significado:** Maior ou igual a.
+- **O que faz:** Filtra os registros onde o valor do campo é maior ou igual à data (ou número) fornecida.
+
+### `lte` (Less Than or Equal)
+
+- **Significado:** Menor ou igual a.
+- **O que faz:** Filtra os registros onde o valor do campo é menor ou igual à data (ou número) fornecida.
+
+---
+
+### Exemplo de Uso (Filtragem por Intervalo de Tempo)
+
+A combinação de `gte` e `lte` é comumente utilizada para buscar registros que se encontram dentro de um intervalo de datas específico, incluindo os limites (o início e o fim do período).
+
+```typescript
+const checkIn = await prisma.checkIn.findFirst({
+  where: {
+    user_id: userId,
+    created_at: {
+      gte: startOfTheDay.toDate(), // <--- created_at deve ser MAIOR OU IGUAL ao início do dia
+      lte: endOfTheDay.toDate(), // <--- created_at deve ser MENOR OU IGUAL ao fim do dia
+    },
+  },
+});
+```
+
+### Neste exemplo:
+
+startOfTheDay e endOfTheDay são objetos Dayjs que representam o primeiro e o último milissegundo de um dia, respectivamente.
+
+O método .toDate() é utilizado para converter esses objetos Dayjs para o formato Date nativo do JavaScript, que é o tipo que o Prisma espera para os campos DateTime nas queries.
+
+A consulta buscará o primeiro check-in de um user_id específico que foi criado entre o início e o fim daquele dia, incluindo ambos os extremos do intervalo.
+
+### Importante
+
+É importante entender que o funcionamento dos operadores de filtro (como gte, lte, contains, etc.) que operam a partir de um objeto aninhado dentro do where é aplicável a diversas propriedades e tipos de dados no banco de dados, não apenas DateTime.
+
+```typescript
+const gyms = await prisma.gym.findMany({
+  where: {
+    title: {
+      contains: query, // <--- Filtra academias cujo título contém a string 'query'
+    },
+  },
+  take: 20, // Limita o número de resultados a 20
+  skip: (page - 1) * 20, // Pula um número de resultados para paginação
+});
+```
