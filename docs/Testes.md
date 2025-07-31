@@ -190,3 +190,126 @@ O código acima executa o seguinte:
 - `vi.useFakeTimers()`: Indica ao JavaScript (no ambiente de testes) para que ele use um sistema de tempo falso (mockado) em vez do relógio real da máquina.
 - O `afterEach` retira essa utilização por meio do método `vi.useRealTimers()`, sendo uma boa prática para restaurar o ambiente de tempo original e evitar que testes subsequentes sejam afetados por tempos falsos.
 - `vi.setSystemTime()`: Recebe uma data e hora específicas e altera o relógio do sistema de tempo falso para essa data. Assim, `Date.now()` e `new Date()` retornarão essa data "mockada" para todo o sistema da aplicação durante a execução do teste.
+
+## Ambiente de Teste Customizado no Vitest
+
+Este documento explica a estrutura e o propósito de um ambiente de teste customizado no Vitest, baseado no padrão da documentação. Ambientes customizados permitem um controle preciso sobre o contexto em que seus testes são executados.
+
+---
+
+### Estrutura Base do Ambiente Customizado
+
+Uma estrutura de variáveis de ambiente personalizada é essencial durante o período de testes. Nos testes, deve-se utilizar um banco de dados separado, e, consequentemente, um arquivo .env diferente. Por meio de um environment customizado, conseguimos definir qual arquivo .env o Vitest irá carregar durante os testes, redirecionando a aplicação para um banco de dados exclusivo de teste.
+
+```typescript
+import type { Environment } from "vitest/environments"; // Importa o tipo 'Environment' para tipagem
+
+export default <Environment>{
+  // Exporta o objeto que define o ambiente, tipado como 'Environment'
+  name: "custom", // Nome do ambiente customizado
+  transformMode: "ssr", // Modo de transformação para módulos, aqui 'ssr' (Server-Side Rendering)
+
+  // Opcional: Bloco de configuração para o ambiente 'experimental-vm' (se usado)
+  async setupVM() {
+    const vm = await import("node:vm"); // Importa o módulo 'vm' do Node.js
+    const context = vm.createContext(); // Cria um novo contexto de máquina virtual
+
+    return {
+      getVmContext() {
+        // Retorna uma função para obter o contexto da VM
+        return context;
+      },
+      teardown() {
+        // Função chamada após a execução de todos os testes que usam este ambiente 'experimental-vm'
+        // Usada para limpeza de recursos relacionados à VM
+      },
+    };
+  },
+
+  // Função principal de setup do ambiente
+  async setup() {
+    // Esta função é executada ANTES de todos os testes rodarem neste ambiente
+    // Lógica de configuração customizada aqui
+    // Por exemplo, configurar variáveis globais, mocks específicos, ou iniciar serviços para o ambiente
+
+    return {
+      teardown() {
+        // Função chamada após a execução de TODOS os testes que usam este ambiente
+        // Usada para limpar recursos ou restaurar o estado após os testes
+      },
+    };
+  },
+};
+```
+
+### Detalhamento dos Componentes
+
+1.  **`import type { Environment } from 'vitest/environments'`**
+
+    - **O que faz:** Importa o tipo TypeScript `Environment` do módulo `vitest/environments`.
+    - **Propósito:** Este `import type` garante que o objeto que você está exportando (`export default <Environment>{...}`) esteja em conformidade com a interface esperada pelo Vitest para um ambiente de teste. Ele fornece autocompletar e verificação de erros de tipagem.
+
+2.  **`export default <Environment>{ ... }`**
+
+    - **O que faz:** Exporta a definição do seu ambiente de teste customizado como o módulo padrão.
+    - **Propósito:** Este objeto é a implementação do ambiente que o Vitest carregará e utilizará quando você o referenciar no seu `vitest.config.ts` (ex: `environment: './path/to/my-custom-env.ts'`).
+
+3.  **`name: 'custom'`**
+
+    - **O que faz:** Define o nome do seu ambiente de teste customizado.
+    - **Propósito:** Este é o nome que você usará na sua configuração do Vitest (`vitest.config.ts`) para ativar este ambiente (ex: `environment: 'custom'`).
+
+4.  **`transformMode: 'ssr'`**
+
+    - **O que faz:** Define como os módulos serão transformados para este ambiente.
+    - **Propósito:** É uma dica para o Vitest sobre como lidar com a importação e transformação de arquivos. `ssr` (Server-Side Rendering) é um modo específico que pode ser necessário para certos tipos de código que rodam em um servidor. Outros valores comuns são `'node'` e `'web'`.
+
+5.  **`async setupVM()`** (Opcional)
+
+    - **O que faz:** Este método é específico para ambientes que utilizam o módulo `vm` (Virtual Machine) do Node.js, como o ambiente `experimental-vm` do Vitest. Ele é executado para configurar o contexto da máquina virtual.
+    - **Propósito:** Permite um isolamento de contexto mais profundo em alguns casos de uso. `vm.createContext()` cria um ambiente de sandbox para o código, e `getVmContext()` permite que o ambiente de teste acesse esse contexto.
+    - **`teardown()` aninhado:** A função `teardown` dentro de `setupVM` é responsável pela limpeza de recursos específicos do contexto da VM.
+
+6.  **`async setup()`** (Principal)
+    - **O que faz:** Esta é a função **principal de configuração do ambiente**. Ela é executada **uma vez** antes de cada worker, que seriam as threads criadas pelo vitest para executar os testes dentro da aplicação.
+    - **Propósito:** Aqui você coloca qualquer lógica de setup global que seu ambiente customizado precise, como configurar variáveis globais, inicializar bancos de dados em memória, ou realizar qualquer preparação que afete a execução dos testes naquele ambiente.
+    - **`teardown()` aninhado:** A função `teardown` retornada por `setup()` é crucial. Ela é chamada **uma vez** após a execução de **todos os testes** que usam este ambiente, garantindo que quaisquer recursos alocados em `setup()` sejam limpos (ex: fechar conexões de DB, limpar mocks globais).
+
+## Configuração de Testes
+
+Para configurar testes para rodar no Vitest com uma configuração específica (como um ambiente customizado ou padrões de inclusão de arquivos), siga este passo a passo:
+
+1.  Crie um novo arquivo de configuração para o Vitest (ex: `vitest.config.controllers.ts`).
+
+2.  Configure este arquivo da seguinte forma:
+
+    ```typescript
+    import { defineConfig } from "vitest/config";
+    import tsconfigPaths from "vite-tsconfig-paths";
+
+    export default defineConfig({
+      plugins: [tsconfigPaths()], // Habilita a resolução de aliases de caminho do tsconfig
+      test: {
+        // Define o ambiente de teste customizado que será usado
+        environment: "./prisma/vitest-environment-prisma/prisma-environment.ts", // Caminho do arquivo do ambiente customizado
+        // Define quais arquivos de teste serão incluídos na execução
+        include: ["src/http/controllers/**/*.{test,spec}.ts"], // Arquivos inclusos quando o Vitest for chamado
+      },
+    });
+    ```
+
+    - No padrão de inclusão (`src/http/controllers/**/*.{test,spec}.ts`):
+      - `**` significa qualquer pasta (ou zero ou mais pastas) dentro de `controllers`.
+      - `*` significa qualquer arquivo com a extensão `.test.ts` ou `.spec.ts` dentro dessas pastas.
+
+3.  Após criar o arquivo de configuração, adicione um script no seu `package.json` para executá-lo:
+
+    ```json
+    {
+      "scripts": {
+        "test:prisma": "vitest run --config vitest.config.controllers.ts"
+      }
+    }
+    ```
+
+    - A flag `--config` é utilizada para apontar para um arquivo de configuração do Vitest diferente do padrão (`vitest.config.ts`), permitindo ter setups de teste específicos.

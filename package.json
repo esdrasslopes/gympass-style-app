@@ -7,8 +7,9 @@
     "start:dev": "tsx watch src/server.ts",
     "build": "tsup src --out-dir build",
     "start": "node build/server.js",
-    "test": "vitest run",
-    "test:watch": "vitest watch",
+    "test:use-cases": "vitest run --config vitest.config.use-cases.ts",
+    "test:watch": "vitest watch --config vitest.config.use-cases.ts",
+    "test:prisma": "vitest run --config vitest.config.controllers.ts",
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui"
   },
@@ -33,6 +34,7 @@
     "vitest": "3.2.4"
   },
   "dependencies": {
+    "@fastify/jwt": "9.1.0",
     "@prisma/client": "6.12.0",
     "bcryptjs": "3.0.2",
     "dayjs": "1.11.13",
