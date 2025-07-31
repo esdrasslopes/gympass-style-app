@@ -3,7 +3,4 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   plugins: [tsconfigPaths()],
-  test: {
-    include: ["src/use-cases/**/*.{test,spec}.ts"],
-  },
 });

@@ -307,9 +307,22 @@ Para configurar testes para rodar no Vitest com uma configuração específica (
     ```json
     {
       "scripts": {
-        "test:prisma": "vitest run --config vitest.config.controllers.ts"
+        "test:e2e": "vitest run --config vitest.config.controllers.ts"
       }
     }
     ```
 
     - A flag `--config` é utilizada para apontar para um arquivo de configuração do Vitest diferente do padrão (`vitest.config.ts`), permitindo ter setups de teste específicos.
+
+Outra coisa interessante, é que por padrão o npm sempre roda comando pre ou post, antes ou depois de algum comando listado em script. Ex:
+
+```json
+{
+  "scripts"{
+    "pretest":"echo oi",
+    "test": "vitest"
+  }
+}
+```
+
+Nesse caso o pretest, por utiliza a flag pre vai executar antes do test. Se quisesse usar depois, bastava usar posttest
