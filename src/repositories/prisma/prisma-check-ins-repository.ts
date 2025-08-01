@@ -23,7 +23,7 @@ export class PrismaCheckInsRepository implements ICheckInsRepository {
     return checkIn;
   }
 
-  async findByUserIdOnDate(userId: string, date: Date) {
+  async findByUserIdOnDate(userId: string) {
     const startOfTheDay: dayjs.Dayjs = dayjs().startOf("date");
 
     const endOfTheDay: dayjs.Dayjs = dayjs().endOf("date");
