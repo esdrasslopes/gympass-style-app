@@ -7,6 +7,7 @@ import { create } from "./create";
 import { validate } from "./validate";
 
 import { history } from "./history";
+
 import { metrics } from "./metrics";
 
 export const checkInsRoutes = async (app: FastifyInstance) => {
