@@ -1,12 +1,13 @@
 # 🏋️ API Sólida - Estilo Gympass
 
-![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)
-![Fastify](https://img.shields.io/badge/Fastify-5-black.svg)
-![Prisma](https://img.shields.io/badge/Prisma-6-darkblue.svg)
-![Vitest](https://img.shields.io/badge/Vitest-3-purple.svg)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue.svg)
-![Docker](https://img.shields.io/badge/Docker-gray.svg?logo=docker)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Fastify](https://img.shields.io/badge/Fastify-000000?style=for-the-badge&logo=fastify&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
+![Zod](https://img.shields.io/badge/Zod-3E67B1?style=for-the-badge&logo=zod&logoColor=white)
+![Vitest](https://img.shields.io/badge/Vitest-6E941C?style=for-the-badge&logo=vitest&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
 ## 📝 Sobre
 
@@ -17,7 +18,7 @@ Esta é uma API para um aplicativo no estilo Gympass, construída em Node.js com
 * **[Node.js](https://nodejs.org/)**: Ambiente de execução JavaScript para o back-end.
 * **[TypeScript](https://www.typescriptlang.org/)**: Superset do JavaScript que adiciona tipagem estática.
 * **[Fastify](https://www.fastify.io/)**: Framework web focado em alta performance e baixo overhead.
-* **[PostgreSQL](https://www.postgresql.org/)**: Sistema de gerenciamento de banco de dados relacional.
+* **[PostgreSQL](https://www.postgresql.org/)**: Sistema de gerenciamento de banco de dados relacional robusto e confiável.
 * **[Prisma](https://www.prisma.io/)**: ORM (Object-Relational Mapper) que facilita a comunicação com o banco de dados.
 * **[Zod](https://zod.dev/)**: Biblioteca para validação de esquemas.
 * **[Vitest](https://vitest.dev/)**: Framework de testes moderno para garantir a qualidade do código.
