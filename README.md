@@ -10,34 +10,28 @@
 
 ## 📝 Sobre
 
-[cite_start]Esta é uma API para um aplicativo no estilo **Gympass**, construída em Node.js com TypeScript. O grande foco do projeto é a aplicação dos princípios **SOLID** e de padrões de arquitetura limpa, como o **Repository Pattern**, para criar um software robusto, escalável e de fácil manutenção.
-
-A aplicação gerencia o cadastro e autenticação de usuários, o registro de academias e o sistema de check-ins.
-
-<br>
+Esta é uma API para um aplicativo no estilo Gympass, construída em Node.js com TypeScript. O grande foco do projeto é a aplicação dos princípios **SOLID** e de padrões de arquitetura limpa, como o **Repository Pattern**, para criar um software robusto, escalável e de fácil manutenção.
 
 ## ⚙️ Tecnologias Utilizadas
 
-- **[Node.js](https://nodejs.org/)**: Ambiente de execução JavaScript.
-- [cite_start]**[TypeScript](https://www.typescriptlang.org/)**: Superset do JavaScript que adiciona tipagem estática.
-- [cite_start]**[Fastify](https://www.fastify.io/)**: Framework web focado em performance e baixo overhead.
-- [cite_start]**[Prisma](https://www.prisma.io/)**: ORM para Node.js e TypeScript.
-- [cite_start]**[Zod](https://zod.dev/)**: Biblioteca para validação de esquemas e tipos.
-- [cite_start]**[Vitest](https://vitest.dev/)**: Framework de testes moderno e completo.
-- **[Docker](https://www.docker.com/)**: Plataforma para criação e gerenciamento de contêineres.
-- **[PostgreSQL](https://www.postgresql.org/)**: Banco de dados relacional.
-- [cite_start]**[TSup](https://tsup.egoist.dev/)**: Ferramenta para build de projetos TypeScript.
-
-<br>
+* **[Node.js](https://nodejs.org/)**: Ambiente de execução JavaScript para o back-end.
+* **[TypeScript](https://www.typescriptlang.org/)**: Superset do JavaScript que adiciona tipagem estática.
+* **[Fastify](https://www.fastify.io/)**: Framework web focado em alta performance e baixo overhead.
+* **[PostgreSQL](https://www.postgresql.org/)**: Sistema de gerenciamento de banco de dados relacional.
+* **[Prisma](https://www.prisma.io/)**: ORM (Object-Relational Mapper) que facilita a comunicação com o banco de dados.
+* **[Zod](https://zod.dev/)**: Biblioteca para validação de esquemas.
+* **[Vitest](https://vitest.dev/)**: Framework de testes moderno para garantir a qualidade do código.
+* **[Docker](https://www.docker.com/)**: Plataforma usada para rodar o banco de dados em um ambiente isolado.
+* **[TSup](https://tsup.egoist.dev/)**: Ferramenta para build de projetos TypeScript.
 
 ## 🚀 Começando
 
-Para executar este projeto localmente, siga os passos abaixo.
+Siga os passos abaixo para configurar e executar o projeto localmente.
 
 ### Pré-requisitos
-- **Node.js** (versão 18 ou superior)
-- **Docker** e **Docker Compose**
-- Um gerenciador de pacotes como **npm**.
+* **Node.js** (versão 18 ou superior)
+* **Docker** e **Docker Compose**
+* **npm**
 
 ### Instalação
 
@@ -52,29 +46,52 @@ Para executar este projeto localmente, siga os passos abaixo.
     npm install
     ```
 
-3.  **Configure o Banco de Dados com Docker:**
-    Suba o contêiner do PostgreSQL. O serviço se chamará `api-solid-pg`.
+3.  **Inicie o banco de dados com Docker:**
     ```bash
     docker-compose up -d
     ```
 
-4.  **Variáveis de Ambiente:**
-    Copie o arquivo de exemplo `.env.example` para um novo arquivo chamado `.env`[cite: 5].
+4.  **Configure as variáveis de ambiente:**
+    Copie o arquivo `.env.example` para um novo arquivo `.env`. O `DATABASE_URL` já está configurado para o Docker.
     ```bash
     cp .env.example .env
     ```
-    > O arquivo `.env` já vem com a `DATABASE_URL` pré-configurada para o contêiner Docker[cite: 5]. Você pode alterar o `JWT_SECRET` se desejar[cite: 5].
 
-5.  **Execute as Migrations do Prisma:**
-    Este comando irá criar as tabelas no seu banco de dados com base no esquema do Prisma.
+5.  **Execute as migrations do banco de dados:**
     ```bash
     npx prisma migrate dev
     ```
 
-<br>
-
 ## ▶️ Executando a Aplicação
 
-- **Modo de Desenvolvimento** (com hot-reload):
-  ```bash
-  npm run start:dev
+* **Modo de Desenvolvimento:**
+    ```bash
+    npm run start:dev
+    ```
+* **Build para Produção:**
+    ```bash
+    npm run build
+    ```
+* **Executar em Produção:**
+    ```bash
+    npm run start
+    ```
+
+## 🧪 Testes
+
+* **Testes unitários/integração (Casos de Uso):**
+    ```bash
+    npm test
+    ```
+* **Testes End-to-End (Controladores):**
+    ```bash
+    npm run test:e2e
+    ```
+* **Gerar relatório de cobertura:**
+    ```bash
+    npm run test:coverage
+    ```
+
+## 📄 Licença
+
+Este projeto está sob a licença **ISC**.
