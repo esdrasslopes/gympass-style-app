@@ -8,9 +8,7 @@ import { execSync } from "node:child_process";
 
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient();
-
-const genereateDatabaseURL = (schema: string) => {
+function genereateDatabaseURL(schema: string) {
   if (!process.env.DATABASE_URL) {
     throw new Error("Please provide a DATABASE_URL environment variable.");
   }
@@ -20,7 +18,7 @@ const genereateDatabaseURL = (schema: string) => {
   url.searchParams.set("schema", schema);
 
   return url.toString();
-};
+}
 
 export default <Environment>{
   name: "prisma",
@@ -32,10 +30,18 @@ export default <Environment>{
 
     process.env.DATABASE_URL = databaseURL;
 
-    execSync("npx prisma migrate deploy");
+    execSync("npx prisma db push");
 
     return {
       async teardown() {
+        const prisma = new PrismaClient({
+          datasources: {
+            db: {
+              url: databaseURL,
+            },
+          },
+        });
+
         await prisma.$executeRawUnsafe(
           `DROP SCHEMA IF EXISTS "${schema}" CASCADE`
         );

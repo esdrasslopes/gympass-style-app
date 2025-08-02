@@ -18,10 +18,14 @@ describe("Profile controller (e2e)", () => {
   it("should be able to get user profile", async () => {
     const { token } = await createAndAuthenticateUser(app);
 
+    console.log(token);
+
     const profileResponse = await request(app.server)
       .get("/me")
       .set("Authorization", `Bearer ${token}`)
       .send();
+
+    console.log(profileResponse.body);
 
     expect(profileResponse.statusCode).toEqual(200);
 
