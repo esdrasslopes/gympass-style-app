@@ -200,3 +200,49 @@ declare module "@fastify/jwt" {
   }
 }
 ```
+
+## Refresh Token
+
+Uma prática comum no uso de token JWT, é dar a ele um tempo de validade. Isso evita que em caso de acesso ao token, alguém com más intenções consiga acessar os dados do usuário. Para que essa validade do token seja bem utilizada, são utilizado refresh tokens. Esse tokens servem para que caso o token de acesso tenha espirado, o refresh seja utilizado como validação, para que assim seja gerado um novo token de acesso para o usuário.
+Exemplo:
+
+```typescript
+const refreshToken = await reply.jwtSign(
+  {},
+  {
+    sign: {
+      sub: user.id,
+      expiresIn: "7d",
+    },
+  }
+);
+
+return reply
+  .setCookie("refreshToken", refreshToken, {
+    path: "/",
+    secure: true,
+    sameSite: true,
+    httpOnly: true,
+  })
+  .status(200)
+  .send({
+    token,
+  });
+
+app.register(fastifyJwt, {
+  secret: env.JWT_SECRET,
+  cookie: {
+    cookieName: "refreshToken",
+    signed: false,
+  },
+  sign: {
+    expiresIn: "10m",
+  },
+});
+```
+
+Esse código acima cria um novo token, e manda ele por meio de cookies. No entanto, esse cookie é enviado com algumas configurações que protegem esse refresh token de ser pego por alguém no lado do cliente. O path permite que todas as rotas da aplicação recebam esse token, o secure serve para falar que esse token só será enviado para os serviços que seguirem o protocolo HTTPS, o sameSite é um opção que esse token só será enviado ao site que tem acesso a aplicação, podendo ser configurado por meio do cors, e o httpOnly serve para dizer que esse cookie só pode ser acessado pelo lado do servidor, não podendo ser acessado pelo document do JS. Além disso, o fastifyJWT, tem uma opção para quando JWT for mandado como cookie, sendo feita a validação e extração desse cookie automaticamente, não sendo necessária ele ser enviado pelo authorization. A propriedade signed serve para indicar que esse jwt que não é necessária a validação da palavra-chave do token, pois ele não será usado para esse caso.
+
+## Como verificar se veio o refresh token?
+
+Para verificar a vindo do refresh, o fastify tem uma função que checa diretamente e valida um token vindo por meio de cookies. Para fazer isto basta chamar a função `await request.jwtVerify({ onlyCookie: true });`. A propriedade onlyCookie vai diretamente checar os dados de um jwt de um cookie.
